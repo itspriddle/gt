@@ -1,0 +1,2 @@
+#!/bin/sh
+ps axo "rss,ucomm" | awk '/Geek/ {printf "GeekTool Memory Usage: %.2f kb", $1/1024}'
