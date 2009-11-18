@@ -1,0 +1,101 @@
+#!/usr/bin/php -q
+<?php
+/*
+Returns system info in this format:
+
+      Uptime - 6 hours, 6 minutes
+   CPU Usage - 7.20% user, 9.90% system, 82.88% idle
+Memory Usage - 781M wired, 1571M active, 969M inactive, 3322M used, 775M free
+Load Average - 0.29 0.46 0.49
+
+*/
+class GeekToolSystemProfiler {
+
+	private $output = "";
+
+	private $raw_cpu_usage = "";
+
+	private $raw_mem_usage = "";
+
+	public function __construct()
+	{
+		$raw = trim(`top -l 2 | awk '/PhysMem|CPU usage/ && NR > 8'`);
+		list($this->raw_cpu_usage, $this->raw_mem_usage) = explode("\n", $raw);
+	}
+
+	public function print_system_profile()
+	{
+		echo $this->get_uptime();
+		echo "\n";
+		echo $this->get_cpu_usage();
+		echo "\n";
+		echo $this->get_memory_usage();
+		echo "\n";
+		echo $this->get_load_average();
+	}
+
+	private function get_uptime()
+	{
+		$out     = array();
+		$weeks   = 0;
+		$days    = 0;
+		$hours   = 0;
+		$mins    = 0;
+		$seconds = 0;
+
+		$raw = trim(`sysctl -n kern.boottime`);
+		$sec = preg_match('/\{ sec = ([0-9]+),/', $raw, $match);
+
+		$seconds = time() - $match[1];
+
+		$mins = floor($seconds / 60);
+		if ($mins > 60)
+		{
+			$hours = floor($mins / 60);
+			$mins = ($mins - ($hours * 60));
+		}
+
+		if ($hours > 24)
+		{
+			$days = floor($hours / 24);
+			$hours = floor($hours % 24);
+		}
+		if ($days >= 7)
+		{
+			$weeks = floor($days / 7);
+			$days  = floor(($days - ($weeks * 7)));
+		}
+
+		$secs = floor($seconds % 60);
+
+		if ($weeks > 0)  $out[] = "{$weeks} week"  . ($weeks > 1 ? 's' : '');
+		if ($days > 0)   $out[] = "{$days} day"    . ($days  > 1 ? 's' : '');
+		if ($hours > 0)  $out[] = "{$hours} hour"  . ($hours > 1 ? 's' : '');
+		if ($mins > 0)   $out[] = "{$mins} minute" . ($mins  > 1 ? 's' : '');
+
+		$output = join(', ', $out);
+
+		return "      Uptime - {$output}";
+	}
+
+	private function get_cpu_usage()
+	{
+		$cpu = explode(" ", $this->raw_cpu_usage);
+		return "   CPU Usage - {$cpu[2]} user, {$cpu[4]} system, {$cpu[6]} idle";
+	}
+
+	private function get_memory_usage()
+	{
+		$memory = substr(str_replace("PhysMem: ", "", $this->raw_mem_usage), 0, -1);
+		return "Memory Usage - {$memory}";
+	}
+
+	private function get_load_average()
+	{
+		$load = preg_match("/load averages: (.*)/", trim(`w`), $load_match);
+		return "Load Average - {$load_match[1]}";
+	}
+}
+
+$s = new GeekToolSystemProfiler;
+$s->print_system_profile();
