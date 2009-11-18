@@ -1,0 +1,2 @@
+#!/bin/sh
+ruby -e "puts sprintf('%.10f', Time.now.to_f)"
