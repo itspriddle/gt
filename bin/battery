@@ -1,0 +1,134 @@
+#!/usr/bin/env ruby
+
+# Output
+
+# Battery Info
+#   Charge: xx.x% charged
+#   Cycles: xx cycles
+#   Status: In Use | Charging | Fully Charged
+
+class Battery
+
+  attr_accessor :current_branch, :raw, :charge_remaining, :is_charging, :is_fully_charged, :charge_cycles, :is_in_use, :charge_capacity
+
+  def initialize
+    current_branch = ""
+    self.raw = self.class.get_raw_data
+    self.raw.each_line do |line|
+      key, value = line.split(': ').map(&:strip)
+      if value.nil? and ! key.nil?
+        current_branch = key.gsub(':','')
+      end
+      next if value.nil? or key.nil?
+      case key
+      when 'Charge remaining (mAh)'
+        self.charge_remaining = value.to_i
+      when 'Fully charged'
+        self.is_fully_charged = value == 'Yes'
+      when 'Charging'
+        if current_branch == 'Charge Information'
+          self.is_charging = value == 'Yes'
+        end
+      when 'Full charge capacity (mAh)'
+        self.charge_capacity = value.to_i
+      when 'Cycle count'
+        self.charge_cycles = value.to_i
+      when 'Current Power Source'
+        if current_branch == 'Battery Power'
+          self.is_in_use = value == 'Yes'
+        end
+      end
+    end
+  end
+
+  def status
+    if self.is_charging
+      'charging'
+    elsif self.is_fully_charged
+      'fully charged'
+    elsif self.is_in_use
+      'in use'
+    end
+  end
+
+  def percent_charged
+    sprintf("%.2f", ((self.charge_remaining.to_f / self.charge_capacity.to_f) * 100)) << '%'
+  end
+
+  def self.get_raw_data
+    `/usr/sbin/system_profiler SPPowerDataType`
+  end
+
+  def self.show_usage
+    b = Battery.new
+    out = <<-OUTPUT
+Battery Info
+  Charge: #{b.percent_charged} charged
+  Cycles: #{b.charge_cycles} charge cycles
+  Status: #{b.status}
+OUTPUT
+  end
+
+end
+
+puts Battery.show_usage
+
+__END__
+
+ Power:
+ 
+     Battery Information:
+ 
+       Model Information:
+           Serial Number: 9G91700ZX4M0A
+           Manufacturer: DP
+           Device name: bq20z951
+           Pack Lot Code: 0000
+           PCB Lot Code: 0000
+           Firmware Version: 0042
+           Hardware Revision: 0001
+           Cell Revision: 0119
+       Charge Information:
+           Charge remaining (mAh): 12709
+           Fully charged: Yes
+           Charging: No
+           Full charge capacity (mAh): 12821
+       Health Information:
+           Cycle count: 58
+           Condition: Normal
+       Battery Installed: Yes
+       Amperage (mA): -2561
+       Voltage (mV): 8212
+ 
+     System Power Settings:
+ 
+       AC Power:
+           System Sleep Timer (Minutes): 0
+           Disk Sleep Timer (Minutes): 10
+           Display Sleep Timer (Minutes): 30
+           Automatic Restart On Power Loss: No
+           Wake On AC Change: No
+           Wake On Clamshell Open: Yes
+           Wake On LAN: No
+           Display Sleep Uses Dim: Yes
+           GPUSwitch: 2
+       Battery Power:
+           System Sleep Timer (Minutes): 20
+           Disk Sleep Timer (Minutes): 5
+           Display Sleep Timer (Minutes): 5
+           Wake On AC Change: No
+           Wake On Clamshell Open: Yes
+           Current Power Source: Yes
+           Display Sleep Uses Dim: Yes
+           Reduce Brightness: Yes
+ 
+     Hardware Configuration:
+ 
+       UPS Installed: No
+ 
+     AC Charger Information:
+ 
+       Connected: No
+       Charging: No
+ 
+
