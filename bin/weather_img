@@ -1,0 +1,20 @@
+#!/usr/bin/php -q
+
+<?php
+// from http://iamawesome.net/2009/04/my-geektool-setup/
+
+$url = "http://weather.yahoo.com/forecast/USNY0082.html"; //Yahoo Weather URL. Sub CITYDATA for your code.
+
+$divStart = "<div class="\"forecast-icon\"";">$strEnd = "'); _background-image/* */: none;"; //HTML after weather image
+$start    = strpos($file_contents, $divStart) + 50;
+$end      = strpos($file_contents, $strEnd);
+$length   = $end - $start;
+
+$imagepath = substr($file_contents, $start , $length); //Pulls path to image
+$image     = imagecreatefrompng($imagepath); //Pulls image source into PHP
+
+imagealphablending($image, true); //Enable alpha blending (important)
+imagesavealpha($image, true);     //Applies alpha to image.
+
+header('Content-Type: image/png'); //Identifies itself as a PNG image
+imagepng($image); //Outputs image contents

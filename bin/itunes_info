@@ -22,9 +22,9 @@ tell application "iTunes"
 	set trackName to the name of trackID
 	set artistName to the artist of trackID
 	set albumName to the album of trackID
-	set totalData to " Track : " & trackName & trackPaused & "
-Artist : " & artistName & "
- Album : " & albumName
+	set totalData to " Track: " & trackName & trackPaused & "
+Artist: " & artistName & "
+ Album: " & albumName
 	return totalData
 end tell
 '

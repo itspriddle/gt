@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
-# Output
-
-# Battery Info
+# = INFO
+#  Outputs MacBook Pro battery information for GeekTool
+#
+#  Battery Info
 #   Charge: xx.x% charged
 #   Cycles: xx cycles
 #   Status: In Use | Charging | Fully Charged
@@ -10,6 +11,11 @@
 class Battery
 
   attr_accessor :current_branch, :raw, :charge_remaining, :is_charging, :is_fully_charged, :charge_cycles, :is_in_use, :charge_capacity
+
+  def self.help
+    require 'rdoc/usage'
+    RDoc.usage('INFO')
+  end
 
   def initialize
     current_branch = ""
@@ -71,7 +77,11 @@ OUTPUT
 
 end
 
-puts Battery.show_usage
+if ['-h', '--help'].include?(ARGV.first)
+  puts Battery.help
+else
+  puts Battery.show_usage
+end
 
 __END__
 

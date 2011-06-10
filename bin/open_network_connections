@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/sbin/netstat -ab -f inet | /usr/bin/grep -i established | /usr/bin/sort -n

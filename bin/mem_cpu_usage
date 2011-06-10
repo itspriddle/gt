@@ -75,25 +75,25 @@ class GeekToolSystemProfiler {
 
 		$output = join(', ', $out);
 
-		return "      Uptime - {$output}";
+		return "      Uptime: {$output}";
 	}
 
 	private function get_cpu_usage()
 	{
 		$cpu = explode(" ", $this->raw_cpu_usage);
-		return "   CPU Usage - {$cpu[2]} user, {$cpu[4]} system, {$cpu[6]} idle";
+		return "   CPU Usage: {$cpu[2]} user, {$cpu[4]} system, {$cpu[6]} idle";
 	}
 
 	private function get_memory_usage()
 	{
 		$memory = substr(str_replace("PhysMem: ", "", $this->raw_mem_usage), 0, -1);
-		return "Memory Usage - {$memory}";
+		return "Memory Usage: {$memory}";
 	}
 
 	private function get_load_average()
 	{
 		$load = preg_match("/load averages: (.*)/", trim(`w`), $load_match);
-		return "Load Average - {$load_match[1]}";
+		return "Load Average: {$load_match[1]}";
 	}
 }
 

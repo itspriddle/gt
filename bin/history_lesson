@@ -1,2 +1,3 @@
 #!/bin/sh
-grep -h "^$(date '+%m/%d')" /usr/share/calendar/calendar.{holiday,history,computer} | cut -f2
+echo "Today's Random Facts"
+grep -h "^$(date '+%m/%d')" /usr/share/calendar/calendar.{holiday,history,computer} | cut -f2 | awk '{print " - " $0}'
