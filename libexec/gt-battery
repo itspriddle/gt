@@ -1,144 +1,136 @@
 #!/usr/bin/env ruby
-
-# = INFO
-#  Outputs MacBook Pro battery information for GeekTool
-#
-#  Battery Info
-#   Charge: xx.x% charged
-#   Cycles: xx cycles
-#   Status: In Use | Charging | Fully Charged
+# Usage: screech battery
+# Summary: Prints battery usage
+# Help: This command prints the battery usage on a MacBook Pro.
 
 class Battery
-
-  attr_accessor :current_branch, :raw, :charge_remaining, :is_charging, :is_fully_charged, :charge_cycles, :is_in_use, :charge_capacity
-
-  def self.help
-    require 'rdoc/usage'
-    RDoc.usage('INFO')
+  # Returns the battery's current charge, in mAh
+  def charge_remaining
+    _, charge = *raw_data.match(/Charge remaining \(mAh\): ([0-9]+)\n/i)
+    charge && charge.to_i
   end
 
-  def initialize
-    current_branch = ""
-    self.raw = self.class.get_raw_data
-    self.raw.each_line do |line|
-      key, value = line.split(': ').map(&:strip)
-      if value.nil? and ! key.nil?
-        current_branch = key.gsub(':','')
-      end
-      next if value.nil? or key.nil?
-      case key
-      when 'Charge remaining (mAh)'
-        self.charge_remaining = value.to_i
-      when 'Fully charged'
-        self.is_fully_charged = value == 'Yes'
-      when 'Charging'
-        if current_branch == 'Charge Information'
-          self.is_charging = value == 'Yes'
-        end
-      when 'Full charge capacity (mAh)'
-        self.charge_capacity = value.to_i
-      when 'Cycle count'
-        self.charge_cycles = value.to_i
-      when 'Current Power Source'
-        if current_branch == 'Battery Power'
-          self.is_in_use = value == 'Yes'
-        end
-      end
-    end
+  # Returns the charge capacity for this battery, in mAh
+  def charge_capacity
+    _, capacity = *raw_data.match(/Full Charge capacity \(mAh\): ([0-9]+)\n/i)
+    capacity && capacity.to_i
   end
 
   def status
-    if self.is_charging
-      'charging'
-    elsif self.is_fully_charged
-      'fully charged'
-    elsif self.is_in_use
-      'in use'
+    case
+    when in_use?
+      "In Use"
+    when charging?
+      "Charging"
+    when fully_charged?
+      "Fully Charged"
     end
   end
 
+  # Returns true if the battery is charging
+  def charging?
+    !! raw_data.match(/Charging: Yes\n/i)
+  end
+
+  # Returns true if the battery is fully charged
+  def fully_charged?
+    !! raw_data.match(/Fully charged: Yes\n/i)
+  end
+
+  # Returns true if the battery is in use
+  def in_use?
+    !! raw_data.match(/Battery Power:.*Current Power Source: Yes\n/mi)
+  end
+
+  # Returns the number of charge cycles completed on this battery
+  def cycle_count
+    _, cycles = *raw_data.match(/Cycle count: ([0-9]+)\n/i)
+    cycles && cycles.to_i
+  end
+
+  # Returns the battery charge remaining in %
   def percent_charged
-    sprintf("%.2f", ((self.charge_remaining.to_f / self.charge_capacity.to_f) * 100)) << '%'
+    "%.2f%%" % ((charge_remaining.to_f / charge_capacity.to_f) * 100)
   end
 
-  def self.get_raw_data
-    `/usr/sbin/system_profiler SPPowerDataType`
+  def raw_data
+    @raw_data ||= `/usr/sbin/system_profiler -detailLevel mini SPPowerDataType 2>&1`
   end
+  private :raw_data
 
-  def self.show_usage
-    b = Battery.new
-    out = <<-OUTPUT
-Battery Info
-  Charge: #{b.percent_charged} charged
-  Cycles: #{b.charge_cycles} charge cycles
-  Status: #{b.status}
-OUTPUT
+  def to_s(format = '%p | %c cycles | %s')
+    format.tap do |f|
+      f.gsub! '%c', cycle_count.to_s
+      f.gsub! '%p', percent_charged.to_s
+      f.gsub! '%s', status.to_s
+    end
   end
-
 end
 
-if ['-h', '--help'].include?(ARGV.first)
-  puts Battery.help
-else
-  puts Battery.show_usage
-end
+puts Battery.new.to_s
 
 __END__
 
- Power:
- 
-     Battery Information:
- 
-       Model Information:
-           Serial Number: 9G91700ZX4M0A
-           Manufacturer: DP
-           Device name: bq20z951
-           Pack Lot Code: 0000
-           PCB Lot Code: 0000
-           Firmware Version: 0042
-           Hardware Revision: 0001
-           Cell Revision: 0119
-       Charge Information:
-           Charge remaining (mAh): 12709
-           Fully charged: Yes
-           Charging: No
-           Full charge capacity (mAh): 12821
-       Health Information:
-           Cycle count: 58
-           Condition: Normal
-       Battery Installed: Yes
-       Amperage (mA): -2561
-       Voltage (mV): 8212
- 
-     System Power Settings:
- 
-       AC Power:
-           System Sleep Timer (Minutes): 0
-           Disk Sleep Timer (Minutes): 10
-           Display Sleep Timer (Minutes): 30
-           Automatic Restart On Power Loss: No
-           Wake On AC Change: No
-           Wake On Clamshell Open: Yes
-           Wake On LAN: No
-           Display Sleep Uses Dim: Yes
-           GPUSwitch: 2
-       Battery Power:
-           System Sleep Timer (Minutes): 20
-           Disk Sleep Timer (Minutes): 5
-           Display Sleep Timer (Minutes): 5
-           Wake On AC Change: No
-           Wake On Clamshell Open: Yes
-           Current Power Source: Yes
-           Display Sleep Uses Dim: Yes
-           Reduce Brightness: Yes
- 
-     Hardware Configuration:
- 
-       UPS Installed: No
- 
-     AC Charger Information:
- 
-       Connected: No
-       Charging: No
- 
+Power:
 
+    Battery Information:
+
+      Model Information:
+          Serial Number: 9G91700ZX4M0A
+          Manufacturer: DP
+          Device name: bq20z951
+          Pack Lot Code: 0000
+          PCB Lot Code: 0000
+          Firmware Version: 0042
+          Hardware Revision: 0001
+          Cell Revision: 0119
+      Charge Information:
+          Charge remaining (mAh): 12709
+          Fully charged: Yes
+          Charging: No
+          Full charge capacity (mAh): 12821
+      Health Information:
+          Cycle count: 58
+          Condition: Normal
+      Battery Installed: Yes
+      Amperage (mA): -2561
+      Voltage (mV): 8212
+
+    System Power Settings:
+
+      AC Power:
+          System Sleep Timer (Minutes): 0
+          Disk Sleep Timer (Minutes): 10
+          Display Sleep Timer (Minutes): 30
+          Automatic Restart On Power Loss: No
+          Wake On AC Change: No
+          Wake On Clamshell Open: Yes
+          Wake On LAN: No
+          Display Sleep Uses Dim: Yes
+          GPUSwitch: 2
+      Battery Power:
+          System Sleep Timer (Minutes): 20
+          Disk Sleep Timer (Minutes): 5
+          Display Sleep Timer (Minutes): 5
+          Wake On AC Change: No
+          Wake On Clamshell Open: Yes
+          Current Power Source: Yes
+          Display Sleep Uses Dim: Yes
+          Reduce Brightness: Yes
+
+    Hardware Configuration:
+
+      UPS Installed: No
+
+    AC Charger Information:
+
+      Connected: No
+      Charging: No
+
+      Connected: Yes
+      ID: 0x0100
+      Wattage (W): 85
+      Revision: 0x0000
+      Family: 0x00ba
+      Serial Number: 0x006fb30c
+      Charging: No
