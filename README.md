@@ -9,7 +9,7 @@ This is just a small collection of GeekTool scripts I've found on the web. If yo
     Some useful gt commands are:
        about-this-mac            Prints information about this Mac
        battery                   Prints battery usage
-       commands                  List all gt commands
+       commands                  Prints a list of all gt commands
        current-weather           Prints your current weather from Yahoo Weather
        external-ip               Prints your current external IP address
        fuzzy-uptime              Prints your current uptime
