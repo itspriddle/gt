@@ -1,2 +1,6 @@
-#!/bin/sh
-/usr/sbin/netstat -ab -f inet | /usr/bin/grep -i established | /usr/bin/sort -n
+#!/usr/bin/env bash
+# Usage: gt open-network-connections
+# Summary: Prints a list of open network connections
+# Help: This command prints a list of open network connections.
+
+netstat -ab -f inet | grep -i established | sort -n

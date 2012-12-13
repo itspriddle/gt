@@ -1,3 +1,8 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# Usage: gt history-lesson
+# Summary: Prints today's history lesson
+# Help: This command prints random facts from today's date in history. They're
+# stored in system provided calendars at `/usr/share/calendar/`
+
 echo "Today's Random Facts"
 grep -h "^$(date '+%m/%d')" /usr/share/calendar/calendar.{holiday,history,computer} | cut -f2 | awk '{print " - " $0}'

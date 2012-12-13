@@ -1,14 +1,17 @@
 #!/usr/bin/php -q
 <?php
-/*
-Returns system info in this format:
+# Usage: gt mem-cpu-usage
+# Summary: Prints the current memory and CPU usage
+# Help: This command prints a detailed overview of the current memory and CPU
+# usage on this system.
+#
+# Example:
+#
+#           Uptime - 6 hours, 6 minutes
+#        CPU Usage - 7.20% user, 9.90% system, 82.88% idle
+#     Memory Usage - 781M wired, 1571M active, 969M inactive, 3322M used, 775M free
+#     Load Average - 0.29 0.46 0.49
 
-      Uptime - 6 hours, 6 minutes
-   CPU Usage - 7.20% user, 9.90% system, 82.88% idle
-Memory Usage - 781M wired, 1571M active, 969M inactive, 3322M used, 775M free
-Load Average - 0.29 0.46 0.49
-
-*/
 class GeekToolSystemProfiler {
 
 	private $output = "";

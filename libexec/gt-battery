@@ -1,7 +1,11 @@
 #!/usr/bin/env ruby
-# Usage: screech battery
+# Usage: gt battery
 # Summary: Prints battery usage
 # Help: This command prints the battery usage on a MacBook Pro.
+#
+# Example:
+#
+#     Battery Usage: 95.27% | 155 cycles | Fully Charged
 
 class Battery
   # Returns the battery's current charge, in mAh
@@ -67,7 +71,7 @@ class Battery
   end
 end
 
-puts Battery.new.to_s
+puts "Battery Usage: #{Battery.new.to_s}"
 
 __END__
 

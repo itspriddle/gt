@@ -1,2 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+# Usage: gt geektool-memory-usage
+# Summary: Prints GeekTool's current memory usage
+# Help: This command prints the amount of memory being used by GeekTool.
 ps axo "rss,ucomm" | awk '/Geek/ {printf "GeekTool Memory Usage: %.2f kb", $1/1024}'

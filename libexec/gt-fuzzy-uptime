@@ -1,7 +1,11 @@
 #!/usr/bin/ruby
-
-# Tested on OS X Leopard only but should work
-# for BSDs
+# Usage: gt fuzzy-uptime
+# Summary: Prints your current uptime.
+# Help: This command prints your current uptime in words.
+#
+# Example:
+#
+#     6 weeks, 5 days, 8 hours, 19 minutes
 
 start = /\{ sec = ([0-9]+),/.match(`sysctl -n kern.boottime`).captures[0]
 

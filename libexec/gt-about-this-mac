@@ -1,5 +1,16 @@
+#!/usr/bin/env bash
+# Usage: gt about-this-mac
+# Summary: Prints information about this Mac
+# Help: This command prints information about this Mac.
+#
+# Example:
+#
+#     Joshua’s MacBook Pro
+#     Mac OS X 10.8.2 12C60
+#     8 GB RAM
+#     Intel(R) Core(TM)2 Duo CPU     T9550  @ 2.66GHz
+
 scutil --get ComputerName;
 sw_vers | awk -F':\t' '{print $2}' | paste -d ' ' - - -;
 sysctl -n hw.memsize | awk '{print $0/1073741824" GB RAM"}';
-sysctl -n machdep.cpu.brand_string;
-
+sysctl -n machdep.cpu.brand_string | sed -n 's/  */ /gp'

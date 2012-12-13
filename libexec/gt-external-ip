@@ -1,2 +1,10 @@
-#!/bin/sh
-echo "External IP :" `curl --silent http://checkip.dyndns.org | awk '{print $6}' | cut -f 1 -d "<"`
+#!/usr/bin/env bash
+# Usage: gt external-ip
+# Summary: Prints your current external IP address
+# Help: This command queries DynDNS to determine your current IP address.
+#
+# Example:
+#
+#     External IP: 123.123.123.123
+
+echo "External IP:" `curl --silent http://checkip.dyndns.org | awk '{print $6}' | cut -f 1 -d "<"`
