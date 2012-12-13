@@ -16,6 +16,7 @@ This is just a small collection of GeekTool scripts I've found on the web. If yo
        geektool-memory-usage     Prints GeekTool's current memory usage
        history-lesson            Prints today's history lesson
        itunes-info               Prints info on the song playing in iTunes
+       itunes-lyrics             Prints lyrics from the song currently playing in iTunes
        mem-cpu-usage             Prints the current memory and CPU usage
        open-network-connections  Prints a list of open network connections
        top-processes             Prints a list of processes sorted by memory
