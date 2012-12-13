@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env osascript
 # Usage: gt itunes-info
 # Summary: Prints info on the song playing in iTunes
 # Help: This command queries iTunes and prints information on the song that is
@@ -10,7 +10,6 @@
 #     Artist: Miss May I
 #      Album: Apologies Are For The Weak
 
-osascript <<< '
 tell application "System Events"
 	set powerCheck to ((application processes whose (name is equal to "iTunes")) count)
 	if powerCheck = 0 then
@@ -38,4 +37,3 @@ Artist: " & artistName & "
  Album: " & albumName
 	return totalData
 end tell
-'
