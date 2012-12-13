@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Usage: gt itunes-info
-# Summary: Prints info on the song playing in iTunes.
+# Summary: Prints info on the song playing in iTunes
 # Help: This command queries iTunes and prints information on the song that is
 # currently playing.
 #

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Usage: gt commands
-# Summary: List all gt commands
+# Summary: Prints a list of all gt commands
 # Help: This command is mostly used for autocompletion in various shells, and for `gt help`.
 # Also, this command helps find commands that are named the same as potentially builtin shell commands (which, cd, etc)
 

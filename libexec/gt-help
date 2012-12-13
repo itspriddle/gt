@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Usage: gt help [<command>]
+# Summary: Prints help about gt commands
 set -e
 
 print_summaries() {

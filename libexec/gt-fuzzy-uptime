@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 # Usage: gt fuzzy-uptime
-# Summary: Prints your current uptime.
+# Summary: Prints your current uptime
 # Help: This command prints your current uptime in words.
 #
 # Example:
